@@ -6,7 +6,7 @@ import { registerUser } from '../features/userSlice'; // Import the registerUser
 
 const Register = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize navigate for redirection
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
