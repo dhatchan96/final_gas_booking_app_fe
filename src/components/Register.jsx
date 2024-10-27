@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { registerUser, loginUser } from '../features/userSlice'; // Import both actions
+import { registerUser, loginUser } from '../features/userSlice';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,6 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Handle register form submission
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -22,17 +21,14 @@ const Register = () => {
     }
 
     try {
-      // Dispatch register action to Redux
-      const registerResult = await dispatch(registerUser({ username, email, password })).unwrap();
-      
-      if (registerResult) {
-        // Automatic login after successful registration
-        const loginResult = await dispatch(loginUser({ email, password })).unwrap();
-        if (loginResult) {
-          setError('');
-          navigate('/'); // Redirect to home page after successful login
-        }
-      }
+      // Dispatch registerUser action
+      await dispatch(registerUser({ username, email, password })).unwrap();
+
+      // Dispatch loginUser action for automatic login
+      await dispatch(loginUser({ email, password })).unwrap();
+
+      // Redirect to home page
+      navigate('/');
     } catch (err) {
       setError('Registration or login failed. Please try again.');
     }
@@ -42,11 +38,10 @@ const Register = () => {
     <div className="container mt-5">
       <h2 className="mb-4">Register</h2>
 
-      {/* Display error message if registration fails */}
+      {/* Display error message */}
       {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleRegister}>
-        {/* Username Input */}
         <div className="mb-3">
           <label className="form-label">Username</label>
           <input
@@ -59,7 +54,6 @@ const Register = () => {
           />
         </div>
 
-        {/* Email Input */}
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input
@@ -72,7 +66,6 @@ const Register = () => {
           />
         </div>
 
-        {/* Password Input */}
         <div className="mb-3">
           <label className="form-label">Password</label>
           <input
@@ -85,7 +78,6 @@ const Register = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <button type="submit" className="btn btn-primary w-100">
           Register
         </button>

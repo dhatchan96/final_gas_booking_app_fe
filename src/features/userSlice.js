@@ -8,13 +8,7 @@ export const registerUser = createAsyncThunk(
   async ({ username, email, password }, { rejectWithValue }) => {
     try {
       const response = await API.post('/auth/register', { username, email, password });
-      const { user, token } = response.data;
-
-      // Save token to localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      return user;
+      return response.data; // Return user data after registration
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -29,11 +23,11 @@ export const loginUser = createAsyncThunk(
       const response = await API.post('/auth/login', { email, password });
       const { user, token } = response.data;
 
-      // Save token to localStorage
+      // Save token and user data to localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      return user;
+      return user; // Return user data after login
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -62,14 +56,13 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoggedIn = true;
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.error = action.payload;
         state.loading = false;
+        state.error = action.payload;
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
