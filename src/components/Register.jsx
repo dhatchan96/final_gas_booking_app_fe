@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../features/userSlice'; // Import the registerUser action
+import { registerUser, loginUser } from '../features/userSlice'; // Import both actions
 
 const Register = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize navigate for redirection
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,13 +23,18 @@ const Register = () => {
 
     try {
       // Dispatch register action to Redux
-      const result = await dispatch(registerUser({ username, email, password })).unwrap();
-      if (result) {
-        setError('');
-        navigate('/'); // Redirect to home page after successful registration
+      const registerResult = await dispatch(registerUser({ username, email, password })).unwrap();
+      
+      if (registerResult) {
+        // Automatic login after successful registration
+        const loginResult = await dispatch(loginUser({ email, password })).unwrap();
+        if (loginResult) {
+          setError('');
+          navigate('/'); // Redirect to home page after successful login
+        }
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError('Registration or login failed. Please try again.');
     }
   };
 
